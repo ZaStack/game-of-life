@@ -16,6 +16,7 @@ const operations = [
 const App = () => {
     const [numRows, setNumRows] = useState(25);
     const [numCols, setNumCols] = useState(40);
+    const [color, setColor] = useState('red')
 
     const generateEmptyGrid = () => {
         const rows = [];
@@ -35,21 +36,22 @@ const App = () => {
     
     const seedGrid = useCallback(() => {
         const rows = [];
-        if (!running) {
-            for (let i = 0; i < numRows; i++) {
-                rows.push(
-                    Array.from(Array(numCols), () =>
-                        Math.random() > 0.7 ? 1 : 0
-                    )
-                );
-            }
-            setGrid(rows);
-        } else return;
-    }, [numCols, numRows, running]);
+        // if (!running) {
+        for (let i = 0; i < numRows; i++) {
+            rows.push(
+                Array.from(Array(numCols), () =>
+                    Math.random() > 0.7 ? 1 : 0
+                )
+            );
+        }
+        setGrid(rows);
+        // } else return;
+    }, [numCols, numRows]);
 
     useEffect(() => {
         seedGrid();
-    }, [seedGrid]);
+    }, [seedGrid, numRows, numCols]);
+
     const runningRef = useRef(running);
     runningRef.current = running;
 
@@ -114,28 +116,73 @@ const App = () => {
             </button>
             <button
                 onClick={() => {
-                    setRunning(!running)
+                    // setRunning(!running)
                     setNumRows(25);
                     setNumCols(40);
+                    // seedGrid()
                 }}>
                 small
             </button>
 
             <button
                 onClick={() => {
-                    setRunning(!running)
+                    // setRunning(!running)
                     setNumRows(40);
                     setNumCols(60);
+                    // seedGrid()
                 }}>
                 medium
             </button>
             <button
                 onClick={() => {
-                    setRunning(!running)
+                    // setRunning(!running)
                     setNumRows(60);
                     setNumCols(80);
+                    // seedGrid()
                 }}>
                 large
+            </button>
+            <button
+                onClick={() => {
+                    setColor('red')
+                }}>
+                red
+            </button>
+            <button
+                onClick={() => {
+                    setColor('purple')
+                }}>
+                purple
+            </button>
+            <button
+                onClick={() => {
+                    setColor('green')
+                }}>
+                green
+            </button>
+            <button
+                onClick={() => {
+                    setColor('pink')
+                }}>
+                pink
+            </button>
+            <button
+                onClick={() => {
+                    setColor('orange')
+                }}>
+                orange
+            </button>
+            <button
+                onClick={() => {
+                    setColor('blue')
+                }}>
+                blue
+            </button>
+            <button
+                onClick={() => {
+                    setColor('yellow')
+                }}>
+                yellow
             </button>
 
             <div
@@ -156,7 +203,7 @@ const App = () => {
                             style={{
                                 width: 20,
                                 height: 20,
-                                backgroundColor: grid[i][j] ? randomColor({hue: 'red'}) : 'black',
+                                backgroundColor: grid[i][j] ? randomColor({hue: `${color}`}) : 'black',
                                 border: 'solid 1px black',
                             }}
                         />
