@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import produce from 'immer';
 import randomColor from 'randomcolor';
 
+//Set neighbor cells to check
 const operations = [
     [0, 1],
     [0, -1],
@@ -18,7 +19,10 @@ const App = () => {
     const [numCols, setNumCols] = useState(40);
     const [color, setColor] = useState('red');
     const [genCount, setGenCount] = useState(0)
+    const [running, setRunning] = useState(false);
     let runningCount = 0
+
+    // Generate the empty grid
 
     const generateEmptyGrid = () => {
         const rows = [];
@@ -27,15 +31,13 @@ const App = () => {
         }
         return rows;
     };
-    
-    
+
     const [grid, setGrid] = useState(() => {
         return generateEmptyGrid();
     });
     
-    
-    const [running, setRunning] = useState(false);
-    
+    //Seed the empty grid on render, and button click
+
     const seedGrid = useCallback(() => {
         const rows = [];
         for (let i = 0; i < numRows; i++) {
@@ -52,6 +54,7 @@ const App = () => {
         seedGrid();
     }, [seedGrid, numRows, numCols]);
 
+    //Run simulation
     const runningRef = useRef(running);
     runningRef.current = running;
 
@@ -87,6 +90,7 @@ const App = () => {
                 }
             });
         });
+        //Set timeout frequency for simulation
         setTimeout(runSimulation, 100);
     }, [numCols, numRows, runningCount]);
 
@@ -122,7 +126,6 @@ const App = () => {
                 }}>
                 small
             </button>
-
             <button
                 onClick={() => {
                     setNumRows(40);
@@ -211,3 +214,4 @@ const App = () => {
     );
 };
 export default App;
+
