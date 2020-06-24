@@ -1,8 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import produce from 'immer';
 
-const numRows = 50;
-const numCols = 50;
 
 const operations = [
     [0, 1],
@@ -15,15 +13,20 @@ const operations = [
     [-1, 0],
 ];
 
-const generateEmptyGrid = () => {
-    const rows = [];
-    for (let i = 0; i < numRows; i++) {
-        rows.push(Array.from(Array(numCols), () => 0));
-    }
-    return rows;
-};
 
 const App = () => {
+    const [numRows, setNumRows] = useState(25);
+    const [numCols, setNumCols] = useState(40);
+    
+    const generateEmptyGrid = () => {
+        const rows = [];
+        for (let i = 0; i < numRows; i++) {
+            rows.push(Array.from(Array(numCols), () => 0));
+        }
+        return rows;
+    };
+    
+
     const [grid, setGrid] = useState(() => {
         return generateEmptyGrid();
     });
@@ -66,7 +69,7 @@ const App = () => {
             });
         });
         setTimeout(runSimulation, 100);
-    }, []);
+    }, [numCols, numRows]);
 
     return (
         <>
@@ -92,7 +95,7 @@ const App = () => {
                     }
                     setGrid(rows);
                 }}>
-                random
+                seed
             </button>
             <button
                 onClick={() => {
@@ -100,6 +103,20 @@ const App = () => {
                 }}>
                 clear
             </button>
+            <button onClick={() => {
+                setNumRows(25);
+                setNumCols(40)
+            }} >small</button>
+
+            <button onClick={() => {
+                setNumRows(40);
+                setNumCols(60)
+            }} >medium</button>
+            <button onClick={() => {
+                setNumRows(60);
+                setNumCols(80)
+            }} >large</button>
+
             <div
                 style={{
                     display: 'grid',
@@ -120,7 +137,7 @@ const App = () => {
                                 height: 20,
                                 backgroundColor: grid[i][j]
                                     ? 'pink'
-                                    : undefined,
+                                    : 'black',
                                 border: 'solid 1px black',
                             }}
                         />
