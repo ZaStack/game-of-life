@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import produce from 'immer';
-
+import randomColor from 'randomcolor';
 
 const operations = [
     [0, 1],
@@ -13,11 +13,10 @@ const operations = [
     [-1, 0],
 ];
 
-
 const App = () => {
     const [numRows, setNumRows] = useState(25);
     const [numCols, setNumCols] = useState(40);
-    
+
     const generateEmptyGrid = () => {
         const rows = [];
         for (let i = 0; i < numRows; i++) {
@@ -25,14 +24,32 @@ const App = () => {
         }
         return rows;
     };
-    
 
+    
     const [grid, setGrid] = useState(() => {
         return generateEmptyGrid();
     });
-
+    
+    
     const [running, setRunning] = useState(false);
+    
+    const seedGrid = useCallback(() => {
+        const rows = [];
+        if (!running) {
+            for (let i = 0; i < numRows; i++) {
+                rows.push(
+                    Array.from(Array(numCols), () =>
+                        Math.random() > 0.7 ? 1 : 0
+                    )
+                );
+            }
+            setGrid(rows);
+        } else return;
+    }, [numCols, numRows, running]);
 
+    useEffect(() => {
+        seedGrid();
+    }, [seedGrid]);
     const runningRef = useRef(running);
     runningRef.current = running;
 
@@ -85,15 +102,7 @@ const App = () => {
             </button>
             <button
                 onClick={() => {
-                    const rows = [];
-                    for (let i = 0; i < numRows; i++) {
-                        rows.push(
-                            Array.from(Array(numCols), () =>
-                                Math.random() > 0.7 ? 1 : 0
-                            )
-                        );
-                    }
-                    setGrid(rows);
+                    seedGrid();
                 }}>
                 seed
             </button>
@@ -103,19 +112,31 @@ const App = () => {
                 }}>
                 clear
             </button>
-            <button onClick={() => {
-                setNumRows(25);
-                setNumCols(40)
-            }} >small</button>
+            <button
+                onClick={() => {
+                    setRunning(!running)
+                    setNumRows(25);
+                    setNumCols(40);
+                }}>
+                small
+            </button>
 
-            <button onClick={() => {
-                setNumRows(40);
-                setNumCols(60)
-            }} >medium</button>
-            <button onClick={() => {
-                setNumRows(60);
-                setNumCols(80)
-            }} >large</button>
+            <button
+                onClick={() => {
+                    setRunning(!running)
+                    setNumRows(40);
+                    setNumCols(60);
+                }}>
+                medium
+            </button>
+            <button
+                onClick={() => {
+                    setRunning(!running)
+                    setNumRows(60);
+                    setNumCols(80);
+                }}>
+                large
+            </button>
 
             <div
                 style={{
@@ -135,9 +156,7 @@ const App = () => {
                             style={{
                                 width: 20,
                                 height: 20,
-                                backgroundColor: grid[i][j]
-                                    ? 'pink'
-                                    : 'black',
+                                backgroundColor: grid[i][j] ? randomColor({hue: 'red'}) : 'black',
                                 border: 'solid 1px black',
                             }}
                         />
