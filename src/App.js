@@ -16,7 +16,9 @@ const operations = [
 const App = () => {
     const [numRows, setNumRows] = useState(25);
     const [numCols, setNumCols] = useState(40);
-    const [color, setColor] = useState('red')
+    const [color, setColor] = useState('red');
+    const [genCount, setGenCount] = useState(0)
+    let runningCount = 0
 
     const generateEmptyGrid = () => {
         const rows = [];
@@ -25,7 +27,7 @@ const App = () => {
         }
         return rows;
     };
-
+    
     
     const [grid, setGrid] = useState(() => {
         return generateEmptyGrid();
@@ -36,7 +38,6 @@ const App = () => {
     
     const seedGrid = useCallback(() => {
         const rows = [];
-        // if (!running) {
         for (let i = 0; i < numRows; i++) {
             rows.push(
                 Array.from(Array(numCols), () =>
@@ -45,7 +46,6 @@ const App = () => {
             );
         }
         setGrid(rows);
-        // } else return;
     }, [numCols, numRows]);
 
     useEffect(() => {
@@ -59,7 +59,7 @@ const App = () => {
         if (!runningRef.current) {
             return;
         }
-
+        setGenCount(runningCount++)
         setGrid((g) => {
             return produce(g, (gridCopy) => {
                 for (let i = 0; i < numRows; i++) {
@@ -88,10 +88,11 @@ const App = () => {
             });
         });
         setTimeout(runSimulation, 100);
-    }, [numCols, numRows]);
+    }, [numCols, numRows, runningCount]);
 
     return (
         <>
+            <div>Generation: {genCount}</div>
             <button
                 onClick={() => {
                     setRunning(!running);
@@ -116,29 +117,23 @@ const App = () => {
             </button>
             <button
                 onClick={() => {
-                    // setRunning(!running)
                     setNumRows(25);
                     setNumCols(40);
-                    // seedGrid()
                 }}>
                 small
             </button>
 
             <button
                 onClick={() => {
-                    // setRunning(!running)
                     setNumRows(40);
                     setNumCols(60);
-                    // seedGrid()
                 }}>
                 medium
             </button>
             <button
                 onClick={() => {
-                    // setRunning(!running)
                     setNumRows(60);
                     setNumCols(80);
-                    // seedGrid()
                 }}>
                 large
             </button>
