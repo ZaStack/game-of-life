@@ -1,9 +1,8 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import produce from 'immer';
+import randomColor from 'randomcolor';
 
-const numRows = 50;
-const numCols = 50;
-
+//Set neighbor cells to check
 const operations = [
     [0, 1],
     [0, -1],
@@ -15,21 +14,47 @@ const operations = [
     [-1, 0],
 ];
 
-const generateEmptyGrid = () => {
-    const rows = [];
-    for (let i = 0; i < numRows; i++) {
-        rows.push(Array.from(Array(numCols), () => 0));
-    }
-    return rows;
-};
-
 const App = () => {
+    const [numRows, setNumRows] = useState(25);
+    const [numCols, setNumCols] = useState(40);
+    const [color, setColor] = useState('red');
+    const [genCount, setGenCount] = useState(0)
+    const [running, setRunning] = useState(false);
+    let runningCount = 0
+
+    // Generate the empty grid
+
+    const generateEmptyGrid = () => {
+        const rows = [];
+        for (let i = 0; i < numRows; i++) {
+            rows.push(Array.from(Array(numCols), () => 0));
+        }
+        return rows;
+    };
+
     const [grid, setGrid] = useState(() => {
         return generateEmptyGrid();
     });
+    
+    //Seed the empty grid on render, and button click
 
-    const [running, setRunning] = useState(false);
+    const seedGrid = useCallback(() => {
+        const rows = [];
+        for (let i = 0; i < numRows; i++) {
+            rows.push(
+                Array.from(Array(numCols), () =>
+                    Math.random() > 0.7 ? 1 : 0
+                )
+            );
+        }
+        setGrid(rows);
+    }, [numCols, numRows]);
 
+    useEffect(() => {
+        seedGrid();
+    }, [seedGrid, numRows, numCols]);
+
+    //Run simulation
     const runningRef = useRef(running);
     runningRef.current = running;
 
@@ -37,7 +62,7 @@ const App = () => {
         if (!runningRef.current) {
             return;
         }
-
+        setGenCount(runningCount++)
         setGrid((g) => {
             return produce(g, (gridCopy) => {
                 for (let i = 0; i < numRows; i++) {
@@ -65,11 +90,13 @@ const App = () => {
                 }
             });
         });
+        //Set timeout frequency for simulation
         setTimeout(runSimulation, 100);
-    }, []);
+    }, [numCols, numRows, runningCount]);
 
     return (
         <>
+            <div>Generation: {genCount}</div>
             <button
                 onClick={() => {
                     setRunning(!running);
@@ -82,17 +109,9 @@ const App = () => {
             </button>
             <button
                 onClick={() => {
-                    const rows = [];
-                    for (let i = 0; i < numRows; i++) {
-                        rows.push(
-                            Array.from(Array(numCols), () =>
-                                Math.random() > 0.7 ? 1 : 0
-                            )
-                        );
-                    }
-                    setGrid(rows);
+                    seedGrid();
                 }}>
-                random
+                seed
             </button>
             <button
                 onClick={() => {
@@ -100,6 +119,70 @@ const App = () => {
                 }}>
                 clear
             </button>
+            <button
+                onClick={() => {
+                    setNumRows(25);
+                    setNumCols(40);
+                }}>
+                small
+            </button>
+            <button
+                onClick={() => {
+                    setNumRows(40);
+                    setNumCols(60);
+                }}>
+                medium
+            </button>
+            <button
+                onClick={() => {
+                    setNumRows(60);
+                    setNumCols(80);
+                }}>
+                large
+            </button>
+            <button
+                onClick={() => {
+                    setColor('red')
+                }}>
+                red
+            </button>
+            <button
+                onClick={() => {
+                    setColor('purple')
+                }}>
+                purple
+            </button>
+            <button
+                onClick={() => {
+                    setColor('green')
+                }}>
+                green
+            </button>
+            <button
+                onClick={() => {
+                    setColor('pink')
+                }}>
+                pink
+            </button>
+            <button
+                onClick={() => {
+                    setColor('orange')
+                }}>
+                orange
+            </button>
+            <button
+                onClick={() => {
+                    setColor('blue')
+                }}>
+                blue
+            </button>
+            <button
+                onClick={() => {
+                    setColor('yellow')
+                }}>
+                yellow
+            </button>
+
             <div
                 style={{
                     display: 'grid',
@@ -110,17 +193,17 @@ const App = () => {
                         <div
                             key={`${i}-${j}`}
                             onClick={() => {
-                                const newGrid = produce(grid, (gridCopy) => {
-                                    gridCopy[i][j] = grid[i][j] ? 0 : 1;
-                                });
-                                setGrid(newGrid);
+                                if(!running){
+                                    const newGrid = produce(grid, (gridCopy) => {
+                                        gridCopy[i][j] = grid[i][j] ? 0 : 1;
+                                    });
+                                    setGrid(newGrid);
+                                }
                             }}
                             style={{
                                 width: 20,
                                 height: 20,
-                                backgroundColor: grid[i][j]
-                                    ? 'pink'
-                                    : undefined,
+                                backgroundColor: grid[i][j] ? randomColor({hue: `${color}`}) : 'black',
                                 border: 'solid 1px black',
                             }}
                         />
@@ -131,3 +214,4 @@ const App = () => {
     );
 };
 export default App;
+
