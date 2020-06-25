@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import produce from 'immer';
 import randomColor from 'randomcolor';
+import { makeStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
 
 //Set neighbor cells to check
 const operations = [
@@ -13,6 +15,18 @@ const operations = [
     [1, 0],
     [-1, 0],
 ];
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      '& > *': {
+        margin: theme.spacing(1),
+        width: theme.spacing(16),
+        height: theme.spacing(16),
+      },
+    },
+  }));
 
 const App = () => {
     const [numRows, setNumRows] = useState(25);
