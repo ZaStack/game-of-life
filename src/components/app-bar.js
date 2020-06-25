@@ -18,17 +18,21 @@ const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
         alignItems: 'center',
+        marginTop: '5px',
         '& > *': {
             margin: theme.spacing(1),
         },
+        backgroundColor: '#0d0d0d',
+        width: '95%'
     },
-    menuButton: {
-        marginRight: theme.spacing(2),
-    },
+    // menuButton: {
+    //     marginRight: theme.spacing(2),
+    // },
     title: {
         flexGrow: 1,
+        maxWidth: '95%'
     },
     formControl: {
         margin: theme.spacing(1),
@@ -43,14 +47,14 @@ const ButtonBar = (props) => {
     const classes = useStyles();
 
     return (
-        <div className={classes.root}>
+        <Paper className={classes.root} elevation={3}>
             <AppBar position='static'>
                 <Toolbar>
                     <Typography variant='h6' className={classes.title}>
                         Generation: {props.genCount}
                     </Typography>
                     <ButtonGroup
-                        color='primary'
+                        color='#454545'
                         aria-label='outlined primary button group'>
                         <Button onClick={props.setRunning}>
                             {props.running ? 'stop' : 'start'}
@@ -105,7 +109,7 @@ const ButtonBar = (props) => {
                     </FormControl>
                 </Toolbar>
             </AppBar>
-        </div>
+        </Paper>
     );
 };
 
