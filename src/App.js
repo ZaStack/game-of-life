@@ -3,7 +3,7 @@ import produce from 'immer';
 import randomColor from 'randomcolor';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-
+import ButtonBar from './components/app-bar';
 //Set neighbor cells to check
 const operations = [
     [0, 1],
@@ -18,24 +18,40 @@ const operations = [
 
 const useStyles = makeStyles((theme) => ({
     root: {
-      display: 'flex',
-      flexWrap: 'wrap',
-      '& > *': {
-        margin: theme.spacing(1),
-        width: theme.spacing(16),
-        height: theme.spacing(16),
-      },
+        display: 'flex',
+        flexDirection: 'column',
+        flexWrap: 'wrap',
+        '& > *': {
+            margin: theme.spacing(1),
+            width: theme.spacing(16),
+            height: theme.spacing(16),
+        },
     },
-  }));
+}));
 
 const App = () => {
     const [numRows, setNumRows] = useState(25);
     const [numCols, setNumCols] = useState(40);
     const [color, setColor] = useState('red');
-    const [genCount, setGenCount] = useState(0)
+    const [genCount, setGenCount] = useState(0);
     const [running, setRunning] = useState(false);
-    let runningCount = 0
+    const classes = useStyles();
+    let runningCount = 0;
 
+
+    const setSmall = () => {
+        setNumRows(25);
+        setNumCols(40)
+    }
+    const setMedium = () => {
+        setNumRows(40);
+        setNumCols(60)
+    }
+    const setLarge = () => {
+        setNumRows(60);
+        setNumCols(80)
+    }
+    
     // Generate the empty grid
 
     const generateEmptyGrid = () => {
@@ -49,16 +65,14 @@ const App = () => {
     const [grid, setGrid] = useState(() => {
         return generateEmptyGrid();
     });
-    
+
     //Seed the empty grid on render, and button click
 
     const seedGrid = useCallback(() => {
         const rows = [];
         for (let i = 0; i < numRows; i++) {
             rows.push(
-                Array.from(Array(numCols), () =>
-                    Math.random() > 0.7 ? 1 : 0
-                )
+                Array.from(Array(numCols), () => (Math.random() > 0.7 ? 1 : 0))
             );
         }
         setGrid(rows);
@@ -76,7 +90,7 @@ const App = () => {
         if (!runningRef.current) {
             return;
         }
-        setGenCount(runningCount++)
+        setGenCount(runningCount++);
         setGrid((g) => {
             return produce(g, (gridCopy) => {
                 for (let i = 0; i < numRows; i++) {
@@ -109,9 +123,26 @@ const App = () => {
     }, [numCols, numRows, runningCount]);
 
     return (
-        <>
-            <div>Generation: {genCount}</div>
-            <button
+        <div className={classes.root}>
+            <ButtonBar
+                genCount={genCount}
+                setColor={setColor}
+                setRunning={() => {
+                    setRunning(!running);
+                    if (!running) {
+                        runningRef.current = true;
+                        runSimulation();
+                    }
+                }}
+                setSmall={setSmall}
+                setMedium={setMedium}
+                setLarge={setLarge}
+                seedGrid={seedGrid}
+                clearGrid={setGrid}
+                generateEmptyGrid={generateEmptyGrid}
+                running={running}
+            />
+            {/* <button
                 onClick={() => {
                     setRunning(!running);
                     if (!running) {
@@ -132,8 +163,8 @@ const App = () => {
                     setGrid(generateEmptyGrid());
                 }}>
                 clear
-            </button>
-            <button
+            </button> */}
+            {/* <button
                 onClick={() => {
                     setNumRows(25);
                     setNumCols(40);
@@ -153,79 +184,84 @@ const App = () => {
                     setNumCols(80);
                 }}>
                 large
-            </button>
-            <button
+            </button> */}
+            {/* <button
                 onClick={() => {
-                    setColor('red')
+                    setColor('red');
                 }}>
                 red
             </button>
             <button
                 onClick={() => {
-                    setColor('purple')
+                    setColor('purple');
                 }}>
                 purple
             </button>
             <button
                 onClick={() => {
-                    setColor('green')
+                    setColor('green');
                 }}>
                 green
             </button>
             <button
                 onClick={() => {
-                    setColor('pink')
+                    setColor('pink');
                 }}>
                 pink
             </button>
             <button
                 onClick={() => {
-                    setColor('orange')
+                    setColor('orange');
                 }}>
                 orange
             </button>
             <button
                 onClick={() => {
-                    setColor('blue')
+                    setColor('blue');
                 }}>
                 blue
             </button>
             <button
                 onClick={() => {
-                    setColor('yellow')
+                    setColor('yellow');
                 }}>
                 yellow
-            </button>
+            </button> */}
 
-            <div
+            <Paper
                 style={{
                     display: 'grid',
                     gridTemplateColumns: `repeat(${numCols}, 20px)`,
                 }}>
                 {grid.map((rows, i) =>
                     rows.map((col, j) => (
-                        <div
+                        <Paper
+                            elevation={3}
                             key={`${i}-${j}`}
                             onClick={() => {
-                                if(!running){
-                                    const newGrid = produce(grid, (gridCopy) => {
-                                        gridCopy[i][j] = grid[i][j] ? 0 : 1;
-                                    });
+                                if (!running) {
+                                    const newGrid = produce(
+                                        grid,
+                                        (gridCopy) => {
+                                            gridCopy[i][j] = grid[i][j] ? 0 : 1;
+                                        }
+                                    );
                                     setGrid(newGrid);
                                 }
                             }}
                             style={{
                                 width: 20,
                                 height: 20,
-                                backgroundColor: grid[i][j] ? randomColor({hue: `${color}`}) : 'black',
+                                backgroundColor: grid[i][j]
+                                    ? randomColor({ hue: `${color}` })
+                                    : 'black',
                                 border: 'solid 1px black',
                             }}
                         />
                     ))
                 )}
-            </div>
-        </>
+            </Paper>
+        </div>
     );
 };
 export default App;
-
