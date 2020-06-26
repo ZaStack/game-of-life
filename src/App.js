@@ -3,6 +3,7 @@ import produce from 'immer';
 import randomColor from 'randomcolor';
 import ButtonBar from './components/app-bar';
 import { makeStyles, Paper, Typography } from '@material-ui/core'
+
 const operations = [
     [0, 1],
     [0, -1],
@@ -51,6 +52,7 @@ const App = () => {
     const classes = useStyles();
     let runningCount = 0;
 
+    //Functions to pass to the appbar component for sizing the grid
     const setSmall = () => {
         setNumRows(25);
         setNumCols(40);
@@ -218,6 +220,7 @@ const App = () => {
                     </ol>
                     <p>Rest in peace, Professor Conway</p>
                 </Typography>
+                <span>&#169; Copyright Zach Stack 2020</span>
             </div>
         </div>
     );
