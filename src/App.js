@@ -1,12 +1,8 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import produce from 'immer';
 import randomColor from 'randomcolor';
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import ButtonBar from './components/app-bar';
-import Typography from '@material-ui/core/Typography';
-
-//Set neighbor cells to check
+import { makeStyles, Paper, Typography } from '@material-ui/core'
 const operations = [
     [0, 1],
     [0, -1],
@@ -31,9 +27,19 @@ const useStyles = makeStyles((theme) => ({
             height: 'auto',
         },
     },
+    container: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+    },
     description: {
-        width: '50%'
-    }
+        color: '#A49FB0',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        fontSize: '1.1rem',
+        maxWidth: '80%'
+    },
 }));
 
 const App = () => {
@@ -130,7 +136,7 @@ const App = () => {
 
     return (
         <div className={classes.root}>
-            <div className='container'>
+            <div className={classes.container}>
                 <Paper
                     style={{
                         display: 'grid',
@@ -166,28 +172,33 @@ const App = () => {
                         ))
                     )}
                 </Paper>
-                <Paper className='app-bar-container'>
-                    <ButtonBar
-                        genCount={genCount}
-                        setColor={setColor}
-                        setRunning={() => {
-                            setRunning(!running);
-                            if (!running) {
-                                runningRef.current = true;
-                                runSimulation();
-                            }
-                        }}
-                        setSmall={setSmall}
-                        setMedium={setMedium}
-                        setLarge={setLarge}
-                        seedGrid={seedGrid}
-                        clearGrid={setGrid}
-                        generateEmptyGrid={generateEmptyGrid}
-                        running={running}
-                    />
-                </Paper>
-                <Typography className='description'>
-                    <ol className='description'>
+                <ButtonBar
+                    className={classes.buttonbar}
+                    genCount={genCount}
+                    setColor={setColor}
+                    setRunning={() => {
+                        setRunning(!running);
+                        if (!running) {
+                            runningRef.current = true;
+                            runSimulation();
+                        }
+                    }}
+                    setSmall={setSmall}
+                    setMedium={setMedium}
+                    setLarge={setLarge}
+                    seedGrid={seedGrid}
+                    clearGrid={setGrid}
+                    generateEmptyGrid={generateEmptyGrid}
+                    running={running}
+                />
+                <Typography className={classes.description}>
+                    <p>
+                        The Game Of Life is a cellular automaton devised by the
+                        brilliant mathematician, John Conway, who passed due to
+                        Covid-19 on April 11, 2020. 
+                    </p>
+                    <span>The rules are as follows:</span>
+                    <ol>
                         <li>
                             Any live cell with fewer than two live neighbours
                             dies, as if by underpopulation.
@@ -205,6 +216,7 @@ const App = () => {
                             becomes a live cell, as if by reproduction.
                         </li>
                     </ol>
+                    <p>Rest in peace, Professor Conway</p>
                 </Typography>
             </div>
         </div>
